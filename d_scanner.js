@@ -65,9 +65,9 @@ export async function main(ns) {
 
     //scan for servers we consider hackable
     const hackable = ALL_SERVERS.filter((s) => {
-      return ns.hasRootAccess(s) &&
+      return !ns.fileExists(ANALYSIS_FLAG_FILE, s) &&
+        ns.hasRootAccess(s) &&
         ns.getServerRequiredHackingLevel(s) <= HLVL &&
-        !ns.fileExists(ANALYSIS_FLAG_FILE, s) &&
         ns.getServerMaxMoney(s) > 0;
     });
     let hTarget = hackable.shift();
