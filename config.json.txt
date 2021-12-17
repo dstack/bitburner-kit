@@ -1,0 +1,10 @@
+{
+  "daemonInterval": 100,
+  "targetMoneyThreshold": 0.75,
+  "targetMoneyTakeThreshold": 0.75,
+  "targetMaxSecurity": 15,
+  "targetMaxOverMinSecurity": 5,
+  "reservedRAM": {
+    "home": 64
+  }
+}
