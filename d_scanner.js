@@ -60,8 +60,9 @@ export async function main(ns) {
     let pwnTarget = pwnable.shift();
     while(pwnTarget){
       await addProject("pwn", 1, pwnTarget);
+      pwnTarget = pwnable.shift();
+      await ns.sleep(INTERNAL_INTERVAL_MS)
     }
-    await ns.sleep(INTERVAL_MS);
 
     //scan for servers we consider hackable
     const hackable = ALL_SERVERS.filter((s) => {
