@@ -390,6 +390,51 @@ async function solverWaysToSum(ns, arrayData) {
     return precalcPartitions[arrayData];
 }
 
+function isParenthesis(c) {
+	return ((c == '(') || (c == ')'));
+}
+
+function isValidString(str) {
+	let cnt = 0;
+	for (let i = 0; i < str.length; i++){
+		if (str[i] == '('){cnt++;}
+		else if (str[i] == ')'){cnt--;}
+		if (cnt < 0){ return false; }
+	}
+	return (cnt == 0);
+}
+
+async function solverInvalidParens(ns, arrayData) {
+  ns.tprint("solverInvalidParens()");
+  await ns.sleep(1000);
+  let visit = new Set(), q = [], temp, level = false, results = [];
+  q.push(arrayData);
+	visit.add(arrayData);
+  while (q.length!=0){
+    let str = q.shift();
+    if (isValidString(str)){
+      results.push(str);
+      level = true;
+    }
+    if(level){ continue; }
+    for (let i = 0; i < str.length; i++) {
+			if (!isParenthesis(str[i])){ continue; }
+      temp = str.substring(0, i) + str.substring(i + 1);
+			if (!visit.has(temp)) {
+				q.push(temp);
+				visit.add(temp);
+			}
+    }
+  }
+  if(results.length < 1){
+    results = "";
+  }
+  if(results.length == 1){
+    results = results[0];
+  }
+  return results;
+}
+
 export async function main(ns) {
     let listServers = ["home"];
     let listIndex = 0;
@@ -619,6 +664,20 @@ export async function main(ns) {
                     break;
                 case "Unique Paths in a Grid I":
                     outputData = await solverUniquePaths(ns, inputData);
+                    outputResult = ns.codingcontract.attempt(outputData, listFiles[z], listServers[listIndex]);
+
+                    ns.tprint([listServers[listIndex],
+                        listFiles[z],
+                        inputType,
+                        outputData,
+                        outputResult
+                    ]);
+                    if (!outputResult) {
+                        ns.tprint("Failed data for debug: " + JSON.stringify(inputData));
+                    }
+                    break;
+                case "Sanitize Parentheses in Expression":
+                    outputData = await solverInvalidParens(ns, inputData);
                     outputResult = ns.codingcontract.attempt(outputData, listFiles[z], listServers[listIndex]);
 
                     ns.tprint([listServers[listIndex],

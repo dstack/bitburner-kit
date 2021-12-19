@@ -9,7 +9,7 @@ results: []
 tasks: []
 
 */
-import { generateId, allServers, getConfig, maxThreads } from "util.js";
+import { generateId, allServers, getConfig, maxThreads, handlePort, autoDiscovery } from "util.js";
 
 function convertToFollowUp(prj, newThreads, keepId){
   return {
@@ -39,8 +39,9 @@ export async function main(ns) {
   function getTaskableServers(){
     const config = getConfig(ns);
     return ALL_SERVERS.map((s) => {
-      let reserve = config.reservedRAM[s] || 0,
-        available = getAvailableRAM(s) - reserve;
+      let reserve = config.reservedRAM[s] || 0;
+      if(reserve == "ALL"){ return {host: s, aRAM: 0}; }
+      let available = getAvailableRAM(s) - reserve;
       return {host: s, aRAM: available};
     })
     .filter((s) => {
@@ -69,29 +70,32 @@ export async function main(ns) {
     }
   }
 
-  while(true){
-    // clear any finishes
-    let port2Data = await ns.readPort(2);
-    while(port2Data != "NULL PORT DATA"){
-      let pData = JSON.parse(port2Data);
-      let projectIndex = trackedProjects.findIndex((prj) => {
-        return prj.id == pData.projectId;
-      });
-      if(projectIndex > -1){
-        let tProj = trackedProjects[projectIndex];
-        tProj.tasks.splice(tProj.tasks.indexOf(pData.taskId), 1);
-        tProj.results.push(pData.result);
-        if(tProj.tasks.length == 0){
-          // project is finished
-          let cProj = trackedProjects.splice(projectIndex, 1)[0];
-          if(!cProj.hasFollowup){
-            await finishProject(cProj);
-          }
+  async function handleTaskFinish(pd){
+    let pData = JSON.parse(pd);
+    let projectIndex = trackedProjects.findIndex((prj) => {
+      return prj.id == pData.projectId;
+    });
+    if(projectIndex > -1){
+      let tProj = trackedProjects[projectIndex];
+      tProj.tasks.splice(tProj.tasks.indexOf(pData.taskId), 1);
+      tProj.results.push(pData.result);
+      if(tProj.tasks.length == 0){
+        // project is finished
+        let cProj = trackedProjects.splice(projectIndex, 1)[0];
+        if(!cProj.hasFollowup){
+          await finishProject(cProj);
         }
       }
-      port2Data = await ns.readPort(2);
-      await ns.sleep(INTERNAL_INTERVAL_MS);
     }
+  }
+
+  while(true){
+    // auto-discover
+    await autoDiscovery(ns, ALL_SERVERS);
+
+    // clear any finishes
+    await handlePort(ns, 2, INTERNAL_INTERVAL_MS, handleTaskFinish);
+
     // start a list of projects to start
     let projectsToStart = [];
 
@@ -100,13 +104,13 @@ export async function main(ns) {
       projectsToStart.push(...projectQueue.splice(0, projectQueue.length));
     }
 
-    let port1Data = ns.readPort(1);
-    while(port1Data != "NULL PORT DATA"){
-      let project = JSON.parse(port1Data);
+    // check for new projects
+    async function handleProjectStart(pd){
+      let project = JSON.parse(pd);
       projectsToStart.push(project);
-      port1Data = await ns.readPort(1);
-      await ns.sleep(INTERNAL_INTERVAL_MS);
     }
+    await handlePOrt(ns, 1, INTERNAL_INTERVAL_MS, handleProjectStart);
+
     // we have projects to start
     let currentProject = projectsToStart.shift();
     while(currentProject){

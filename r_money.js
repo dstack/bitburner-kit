@@ -1,6 +1,6 @@
 /** @param {NS} ns **/
 import { allServers, getConfig } from "util.js";
-
+import { TextTable } from "util.TextTable.js";
 export async function main(ns) {
   const ALL_SERVERS = allServers(ns);
 
@@ -19,9 +19,16 @@ export async function main(ns) {
   })
   .sort((a,b) => {
     return b.currMon - a.currMon;
+  })
+  .map((l) => {
+    return [
+      l.host,
+      ns.nFormat(l.currMon, "0.000a"),
+      ns.nFormat(l.maxMon, "0.000a"),
+      `${((l.currMon / l.maxMon)*100).toFixed(2)}%`,
+      `${l.currSec.toFixed(2)}`
+    ]
   });
 
-  report.forEach((l) => {
-    ns.tprint(`${l.host} || ${l.currMon} || ${l.maxMon} || ${((l.currMon / l.maxMon)*100).toFixed(2)}% || ${l.currSec.toFixed(2)}`);
-  });
+  ns.tprint("\n"+TextTable(report, {hsep: "  |  "}))
 }

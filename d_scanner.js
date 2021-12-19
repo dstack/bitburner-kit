@@ -3,7 +3,7 @@
   publish new projects to 1
   listen for finished projects on 3
 */
-import { generateId, allServers, getConfig, maxThreads } from "util.js";
+import { generateId, allServers, getConfig, maxThreads, handlePort, autoDiscovery } from "util.js";
 
 const CRACK_NAMES = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"];
 const ANALYSIS_FLAG_FILE = "analysis-ignore.txt";
@@ -32,26 +32,28 @@ export async function main(ns) {
     await ns.scp(ANALYSIS_FLAG_FILE, "home", target);
   }
 
+  async function handleProjectFinish(prjId){
+    let projectIndex = trackedProjects.findIndex((prj) => {
+      return prj.id == prjId;
+    });
+    if(projectIndex > -1){
+      let cPrj = trackedProjects.splice(projectIndex, 1)[0];
+      ns.rm(ANALYSIS_FLAG_FILE, cPrj.target);
+    }
+  }
+
   let cycleCounter = 0
   while(true){
+    // auto-discover
+    await autoDiscovery(ns, ALL_SERVERS);
+    
     // get current config
     const config = getConfig(ns);
     // get current hacking lvl
     const HLVL = ns.getHackingLevel();
 
     // clear finished projects
-    let port3Data = await ns.readPort(3);
-    while(port3Data != "NULL PORT DATA"){
-      let projectIndex = trackedProjects.findIndex((prj) => {
-        return prj.id == port3Data;
-      });
-      if(projectIndex > -1){
-        let cPrj = trackedProjects.splice(projectIndex, 1)[0];
-        ns.rm(ANALYSIS_FLAG_FILE, cPrj.target);
-      }
-      port3Data = await ns.readPort(3);
-      await ns.sleep(INTERNAL_INTERVAL_MS);
-    }
+    await handlePort(ns, 3, INTERNAL_INTERVAL_MS, handleProjectFinish);
 
     //scan servers for pwnable
     const pwnable = ALL_SERVERS.filter((s) => {
@@ -81,14 +83,13 @@ export async function main(ns) {
         maxMon = ns.getServerMaxMoney(hTarget);
       if(currSec > config.targetMaxSecurity && currSec > minSec + config.targetMaxOverMinSecurity){
         // weaken the server
-        let diff = currSec - (minSec + config.targetMaxOverMinSecurity),
-          diffPerThread = ns.weakenAnalyze(1),
-          threadsReq = Math.ceil(diff / (diffPerThread || 1));
+        let diff = currSec - minSec,
+          threadsReq = Math.ceil(diff / 0.05);
         await addProject("weak", threadsReq, hTarget);
       }
       else if(currMon < maxMon * config.targetMoneyThreshold){
         // grow the server
-        let delta = (maxMon * config.targetMoneyThreshold) / (currMon || 1),
+        let delta = maxMon / (currMon || 1),
           threadsReq = ns.growthAnalyze(hTarget, delta);
         await addProject("grow", threadsReq, hTarget);
       }

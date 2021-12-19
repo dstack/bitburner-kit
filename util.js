@@ -61,3 +61,21 @@ export function getConfig(ns){
 export function maxThreads(cost, avail){
   return Math.floor(avail/cost);
 }
+
+export async function handlePort(ns, portN, portTiming, cb){
+  let portData = await ns.readPort(portN);
+  while(portData != "NULL PORT DATA"){
+    // pass the portData to the callback
+    await cb(portData);
+    portData = await ns.readPort(portN);
+    await ns.sleep(portTiming);
+  }
+}
+
+export async function autoDiscovery(ns, serverList){
+  await handlePort(ns, 4, 10, async function(pd) {
+    if(!serverList.includes(pd)){
+      serverList.push(pd);
+    }
+  });
+}
