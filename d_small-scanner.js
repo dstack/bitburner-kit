@@ -12,6 +12,9 @@ export async function main(ns) {
   }).length;
 
   while(true){
+    // get current hacking lvl
+    const HLVL = ns.getHackingLevel();
+    
     const ALL_SERVERS = allServers(ns);
     //scan servers for pwnable
     const pwnable = ALL_SERVERS.filter((s) => {
