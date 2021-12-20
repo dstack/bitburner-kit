@@ -1,6 +1,7 @@
 function dec2hex (dec) {
   return dec.toString(16).padStart(2, "0")
 }
+
 function scan(ns, parent, server, list) {
   const children = ns.scan(server);
   for (let child of children) {
@@ -11,6 +12,7 @@ function scan(ns, parent, server, list) {
     scan(ns, server, child, list);
   }
 }
+
 function recursiveScan(ns, parent, server, target, route) {
   const children = ns.scan(server);
   for (let child of children) {
@@ -73,9 +75,11 @@ export async function handlePort(ns, portN, portTiming, cb){
 }
 
 export async function autoDiscovery(ns, serverList){
-  await handlePort(ns, 4, 10, async function(pd) {
-    if(!serverList.includes(pd)){
-      serverList.push(pd);
-    }
-  });
+  let pd = await ns.peek(4);
+  if(pd != "NULL PORT DATA"){
+    let newServers = JSON.parse(pd).filter((s) => {
+      return !serverList.includes(s);
+    });
+    serverList.push(...newServers);
+  }
 }

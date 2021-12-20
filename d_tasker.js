@@ -22,8 +22,6 @@ function convertToFollowUp(prj, newThreads, keepId){
 }
 
 export async function main(ns) {
-  const INTERVAL_MS = getConfig(ns).daemonInterval;
-  const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
   const ALL_SERVERS = allServers(ns, true);
   const trackedProjects = [];
   const projectQueue = [];
@@ -90,6 +88,10 @@ export async function main(ns) {
   }
 
   while(true){
+    const CONFIG = getConfig(ns);
+    const INTERVAL_MS = CONFIG.daemonInterval;
+    const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
+    
     // auto-discover
     await autoDiscovery(ns, ALL_SERVERS);
 

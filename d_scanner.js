@@ -9,8 +9,6 @@ const CRACK_NAMES = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.
 const ANALYSIS_FLAG_FILE = "analysis-ignore.txt";
 
 export async function main(ns) {
-  const INTERVAL_MS = getConfig(ns).daemonInterval;
-  const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
   const ALL_SERVERS = allServers(ns);
   const trackedProjects = [];
   const availableCracks = CRACK_NAMES.filter((cn) => {
@@ -44,9 +42,13 @@ export async function main(ns) {
 
   let cycleCounter = 0
   while(true){
+    const CONFIG = getConfig(ns);
+    const INTERVAL_MS = CONFIG.daemonInterval;
+    const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
+    
     // auto-discover
     await autoDiscovery(ns, ALL_SERVERS);
-    
+
     // get current config
     const config = getConfig(ns);
     // get current hacking lvl
