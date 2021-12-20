@@ -13,7 +13,7 @@ export async function main(ns) {
       return;
   }
 
-	const maxThreads = Math.floor((ns.getServerMaxRam(target) - ns.getServerUsedRam(target)) / ns.getScriptRam(args.script));
+	const maxThreads = Math.floor((ns.getServerMaxRam(args.target) - ns.getServerUsedRam(args.target)) / ns.getScriptRam(args.script));
   ns.tprint(`max threads to run ${args.script} on ${args.target}: ${maxThreads}`);
 }
 

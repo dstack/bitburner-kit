@@ -40,7 +40,7 @@ export async function main(ns) {
   else {
     ns.tprint(`${args.target} already pwnd!`);
   }
-  await ns.writePort(2, JSON.stringify({taskId: args.taskId, projectId: args.projectId, result}));
+  await ns.writePort(2, JSON.stringify({taskId: args.taskId, projectId: args.projectId, result: true}));
 }
 
 export function autocomplete(data, args) {

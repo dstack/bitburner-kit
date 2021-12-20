@@ -22,7 +22,7 @@ export async function main(ns) {
     });
     let pwnTarget = pwnable.shift();
     while(pwnTarget){
-      await ns.run("t_pwn.js", 1, pwnTarget);
+      await ns.run("t_pwn.js", 1, "--target", pwnTarget);
       pwnTarget = pwnable.shift();
       await ns.sleep(INTERNAL_INTERVAL_MS)
     }
