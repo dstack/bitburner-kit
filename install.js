@@ -20,6 +20,7 @@ const INSTALL_FILES = [
   "t_xp-farm.js",
   "u_deploy.js",
   "u_max-threads.js",
+  "u_peek.js",
   "u_server-buy.js",
   "u_rm-all.js",
   "util.ContractSolutions.js",
@@ -69,7 +70,7 @@ export async function main(ns){
   }
   let config = merge(defaultConfig, {});
   config = merge(existingConfig, config);
-  ns.tprint(config);
+  ns.print(config);
   await ns.write(CONF_FILE_NAME, JSON.stringify(config, null, "  "), "w");
   ns.tprint("=".repeat(20));
   ns.tprint("All Done!  Try running start.js ...");

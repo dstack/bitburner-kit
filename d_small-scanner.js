@@ -7,11 +7,11 @@ const DEPLOYABLE = "self_hgw.js";
 export async function main(ns) {
   const INTERVAL_MS = getConfig(ns).daemonInterval;
   const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
-  const availableCracks = CRACK_NAMES.filter((cn) => {
-    return ns.fileExists(cn, "home");
-  }).length;
 
   while(true){
+    const availableCracks = CRACK_NAMES.filter((cn) => {
+      return ns.fileExists(cn, "home");
+    }).length;
     // get current hacking lvl
     const HLVL = ns.getHackingLevel();
 

@@ -11,9 +11,6 @@ const ANALYSIS_FLAG_FILE = "analysis-ignore.txt";
 export async function main(ns) {
   const ALL_SERVERS = allServers(ns);
   const trackedProjects = [];
-  const availableCracks = CRACK_NAMES.filter((cn) => {
-    return ns.fileExists(cn, "home");
-  }).length;
   ns.clearPort(1);
   ns.clearPort(3);
 
@@ -42,10 +39,13 @@ export async function main(ns) {
 
   let cycleCounter = 0
   while(true){
+    const availableCracks = CRACK_NAMES.filter((cn) => {
+      return ns.fileExists(cn, "home");
+    }).length;
     const CONFIG = getConfig(ns);
     const INTERVAL_MS = CONFIG.daemonInterval;
     const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
-    
+
     // auto-discover
     await autoDiscovery(ns, ALL_SERVERS);
 
