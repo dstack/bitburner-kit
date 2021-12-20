@@ -76,10 +76,10 @@ export function getConfig(ns){
   return JSON.parse(ns.read(CONFIG_FILE));
 }
 
-export function setConfig(ns, nVal){
+export async function setConfig(ns, nVal){
   let conf = getConfig(ns),
   nConf = merge(nVal, conf);
-  ns.write(CONFIG_FILE, JSON.stringify(nConf, null, "  "));
+  await ns.write(CONFIG_FILE, JSON.stringify(nConf, null, "  "));
   return nConf;
 }
 
