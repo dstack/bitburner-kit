@@ -69,6 +69,7 @@ export async function main(ns){
   }
   let config = merge(defaultConfig, {});
   config = merge(existingConfig, config);
+  ns.tprint(config);
   await ns.write(CONF_FILE_NAME, JSON.stringify(config, null, "  "));
   ns.tprint("=".repeat(20));
   ns.tprint("All Done!  Try running start.js ...");
