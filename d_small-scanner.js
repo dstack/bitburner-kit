@@ -14,7 +14,7 @@ export async function main(ns) {
   while(true){
     // get current hacking lvl
     const HLVL = ns.getHackingLevel();
-    
+
     const ALL_SERVERS = allServers(ns);
     //scan servers for pwnable
     const pwnable = ALL_SERVERS.filter((s) => {
@@ -32,7 +32,8 @@ export async function main(ns) {
       return ns.hasRootAccess(s) && // we have root
         ns.getServerRequiredHackingLevel(s) <= HLVL && // we can beat the hack lvl
         ns.getServerMaxMoney(s) > 0 && //has money
-        !ns.scriptRunning(DEPLOYABLE, s); // not already running self-hack
+        !ns.scriptRunning(DEPLOYABLE, s) && // not already running self-hack
+        ns.getServerMaxRam(s) > 3;
     });
     let hTarget = hackable.shift();
     while(hTarget){
