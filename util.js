@@ -79,7 +79,7 @@ export function getConfig(ns){
 export async function setConfig(ns, nVal){
   let conf = getConfig(ns),
   nConf = merge(nVal, conf);
-  await ns.write(CONFIG_FILE, JSON.stringify(nConf, null, "  "));
+  await ns.write(CONFIG_FILE, JSON.stringify(nConf, null, "  "), "w");
   return nConf;
 }
 

@@ -91,7 +91,7 @@ export async function main(ns) {
     const CONFIG = getConfig(ns);
     const INTERVAL_MS = CONFIG.daemonInterval;
     const INTERNAL_INTERVAL_MS = Math.ceil(INTERVAL_MS / 10);
-    
+
     // auto-discover
     await autoDiscovery(ns, ALL_SERVERS);
 
@@ -111,7 +111,7 @@ export async function main(ns) {
       let project = JSON.parse(pd);
       projectsToStart.push(project);
     }
-    await handlePOrt(ns, 1, INTERNAL_INTERVAL_MS, handleProjectStart);
+    await handlePort(ns, 1, INTERNAL_INTERVAL_MS, handleProjectStart);
 
     // we have projects to start
     let currentProject = projectsToStart.shift();
