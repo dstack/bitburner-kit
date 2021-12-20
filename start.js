@@ -38,7 +38,7 @@ If neither mode is selected, this script will chose automatically.
   else if(auto && myRam > smallRamReq) {
     args.small = true;
   }
-  else {
+  else if(auto) {
     ns.tprint("WOW!  You ran this on a server that can't support anything!  Good job, doofus.")
     ns.exit();
   }
