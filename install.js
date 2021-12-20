@@ -20,6 +20,7 @@ const INSTALL_FILES = [
   "t_xp-farm.js",
   "u_deploy.js",
   "u_max-threads.js",
+  "u_server-buy.js",
   "util.ContractSolutions.js",
   "util.js",
   "util.TextTable.js"

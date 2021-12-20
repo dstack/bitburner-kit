@@ -15,7 +15,7 @@ export async function main(ns) {
       return;
   }
 
-	const maxThreads = Math.floor((ns.getServerMaxRam(target) - ns.getServerUsedRam(target)) / ns.getScriptRam(args.script));
+	const maxThreads = Math.floor((ns.getServerMaxRam(args.target) - ns.getServerUsedRam(args.target)) / ns.getScriptRam(args.script));
   let threads = args.threads;
   if(threads < 1 || threads > maxThreads){
     threads = maxThreads;
@@ -26,8 +26,4 @@ export async function main(ns) {
 	ns.tprint(`Launching ${args.script} on ${args.target} with ${threads} threads.`);
 	await ns.scp(args.script, "home", args.target);
 	ns.exec(args.script, args.target, threads);
-}
-
-export function autocomplete(data, args) {
-    return [...data.servers, ...data.script];
 }

@@ -1,3 +1,5 @@
+const CONFIG_FILE = "config.json.txt";
+
 function dec2hex (dec) {
   return dec.toString(16).padStart(2, "0")
 }
@@ -33,6 +35,20 @@ function recursiveScan(ns, parent, server, target, route) {
   return false;
 }
 
+function merge(source, target) {
+  for (const [key, val] of Object.entries(source)) {
+    if (val !== null && typeof val === `object`) {
+      if (target[key] === undefined) {
+        target[key] = new val.__proto__.constructor();
+      }
+      merge(val, target[key]);
+    } else {
+      target[key] = val;
+    }
+  }
+  return target; // we're replacing in-situ, so this is more for chaining than anything else
+}
+
 export function generateId (len) {
   var arr = new Uint8Array((len || 40) / 2)
   crypto.getRandomValues(arr)
@@ -57,7 +73,14 @@ export function findServer(ns, host, start) {
 }
 
 export function getConfig(ns){
-  return JSON.parse(ns.read("config.json.txt"));
+  return JSON.parse(ns.read(CONFIG_FILE));
+}
+
+export function setConfig(ns, nVal){
+  let conf = getConfig(ns),
+  nConf = merge(nVal, conf);
+  ns.write(CONFIG_FILE, JSON.stringify(nConf, null, "  "));
+  return nConf;
 }
 
 export function maxThreads(cost, avail){

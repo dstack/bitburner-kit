@@ -2,6 +2,11 @@
 
 This is my personal script library for BitBurner (Steam version)
 
+# Installation
+```
+home; wget https://raw.githubusercontent.com/dstack/bitburner-kit/main/install.js;
+```
+
 # Ports
 
 | Port Number | Description          |
