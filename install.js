@@ -73,5 +73,8 @@ export async function main(ns){
   ns.print(config);
   await ns.write(CONF_FILE_NAME, JSON.stringify(config, null, "  "), "w");
   ns.tprint("=".repeat(20));
+  ns.tprint("Setting up aliases ...");
+  let doc = eval("document");
+  let terminal = doc.getElementById("terminal-input");
   ns.tprint("All Done!  Try running start.js ...");
 }

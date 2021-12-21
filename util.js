@@ -91,7 +91,7 @@ export async function handlePort(ns, portN, portTiming, cb){
   let portData = await ns.readPort(portN);
   while(portData != "NULL PORT DATA"){
     // pass the portData to the callback
-    await cb(portData);
+    await cb(ns, portData);
     portData = await ns.readPort(portN);
     await ns.sleep(portTiming);
   }

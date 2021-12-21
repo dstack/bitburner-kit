@@ -68,7 +68,7 @@ export async function main(ns) {
     }
   }
 
-  async function handleTaskFinish(pd){
+  async function handleTaskFinish(ns, pd){
     let pData = JSON.parse(pd);
     let projectIndex = trackedProjects.findIndex((prj) => {
       return prj.id == pData.projectId;
@@ -107,7 +107,7 @@ export async function main(ns) {
     }
 
     // check for new projects
-    async function handleProjectStart(pd){
+    async function handleProjectStart(ns, pd){
       let project = JSON.parse(pd);
       projectsToStart.push(project);
     }

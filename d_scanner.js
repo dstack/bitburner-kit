@@ -27,7 +27,8 @@ export async function main(ns) {
     await ns.scp(ANALYSIS_FLAG_FILE, "home", target);
   }
 
-  async function handleProjectFinish(prjId){
+  async function handleProjectFinish(ns, prjId){
+    ns.tprint("handling porject end");
     let projectIndex = trackedProjects.findIndex((prj) => {
       return prj.id == prjId;
     });
@@ -92,7 +93,7 @@ export async function main(ns) {
       else if(currMon < maxMon * config.targetMoneyThreshold){
         // grow the server
         let delta = maxMon / (currMon || 1),
-          threadsReq = ns.growthAnalyze(hTarget, delta);
+          threadsReq = Math.ceil(ns.growthAnalyze(hTarget, delta));
         await addProject("grow", threadsReq, hTarget);
       }
       else if(currMon > 0){
