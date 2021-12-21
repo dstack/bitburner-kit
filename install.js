@@ -11,6 +11,7 @@ const INSTALL_FILES = [
   "d_small-scanner.js",
   "d_tasker.js",
   "r_money.js",
+  "r_servers.js",
   "self_hgw.js",
   "start.js",
   "t_grow.js",
@@ -19,6 +20,8 @@ const INSTALL_FILES = [
   "t_weak.js",
   "t_xp-farm.js",
   "u_deploy.js",
+  "u_find.js",
+  "u_lud_speed.js",
   "u_max-threads.js",
   "u_peek.js",
   "u_server-buy.js",
@@ -26,6 +29,15 @@ const INSTALL_FILES = [
   "util.ContractSolutions.js",
   "util.js",
   "util.TextTable.js"
+];
+
+const INSTALL_ALIAS = [
+  `alias nuke="run NUKE.exe"`,
+  `alias goto-plaid="run u_lud_speed.js"`,
+  `alias start="run start.js"`,
+  `alias hackup="run u_deploy.js --script t_xp-farm.js --target"`,
+  `alias editconf="nano config.json.txt"`,
+  `alias peek="run peek.js --port"`
 ];
 
 function merge(source, target) {
@@ -76,5 +88,10 @@ export async function main(ns){
   ns.tprint("Setting up aliases ...");
   let doc = eval("document");
   let terminal = doc.getElementById("terminal-input");
-  ns.tprint("All Done!  Try running start.js ...");
+  let cmd = INSTALL_ALIAS.join("; ");
+  terminal.value = cmd;
+  const h = Object.keys(terminal)[1];
+  terminal[h].onChange({target:terminal});
+  terminal[h].onKeyDown({keyCode:13,preventDefault:()=>null});
+  ns.tprint("All Done!  Try running \"start\" ...");
 }
