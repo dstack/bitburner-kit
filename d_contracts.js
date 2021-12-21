@@ -109,7 +109,7 @@ export async function main(ns) {
           ns.tprint([cc.target, cc.file, inputType, "NO SOLVER YET"]);
           break;
       }
-      if(outputData){
+      if(outputData || outputData === 0){
         outputResult = ns.codingcontract.attempt(outputData, cc.file, cc.target);
       }
       if(outputResult){
